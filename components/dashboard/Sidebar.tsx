@@ -42,10 +42,10 @@ export function Sidebar() {
   }, [user]);
 
   const modules: SidebarItem[] = [
-    { href: '/modules/chess', label: 'Chess', icon: '♟️' },
-    { href: '/modules/coding', label: 'Coding', icon: '💻' },
-    { href: '/modules/quiz', label: 'She Can Be', icon: '🎯' },
-    { href: '/modules/geography', label: 'Geography', icon: '🌍' },
+    { href: '/chess', label: 'Chess', icon: '♟️' },
+    { href: '/coding', label: 'Coding', icon: '💻' },
+    { href: '/quiz', label: 'She Can Be', icon: '🎯' },
+    { href: '/geography', label: 'Geography', icon: '🌍' },
   ];
 
   const dashboardItems: SidebarItem[] =

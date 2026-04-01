@@ -208,7 +208,7 @@ export async function sendWelcomeEmail(email: string, name: string): Promise<Sen
               </ul>
 
               <p>
-                <a href="${process.env.NEXT_PUBLIC_APP_URL || 'https://brindaworld.com'}/modules/chess" class="cta">
+                <a href="${process.env.NEXT_PUBLIC_APP_URL || 'https://brindaworld.com'}/chess" class="cta">
                   Start Learning Now
                 </a>
               </p>
@@ -222,7 +222,7 @@ export async function sendWelcomeEmail(email: string, name: string): Promise<Sen
         </body>
       </html>
     `,
-    text: `Welcome to BrindaWorld!\n\nHi ${name},\n\nWelcome to BrindaWorld! We're excited to have you join our community.\n\nYou now have access to six learning modules and more. Visit https://brindaworld.com/modules/chess to get started.\n\nQuestions? Contact support@brindaworld.com`,
+    text: `Welcome to BrindaWorld!\n\nHi ${name},\n\nWelcome to BrindaWorld! We're excited to have you join our community.\n\nYou now have access to six learning modules and more. Visit https://brindaworld.com/chess to get started.\n\nQuestions? Contact support@brindaworld.com`,
   });
 }
 

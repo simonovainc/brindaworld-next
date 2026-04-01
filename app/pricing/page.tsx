@@ -19,7 +19,7 @@ export default function PricingPage() {
           description: 'Perfect for exploring',
           features: ['Browse all modules', 'View lessons', 'No account required', 'Mobile friendly'],
           trial: 'Unlimited',
-          href: '/modules/chess',
+          href: '/chess',
           cta: 'Start Exploring',
           popular: false,
         },

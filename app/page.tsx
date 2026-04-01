@@ -9,12 +9,12 @@ export default function Home() {
   const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
 
   const modules = [
-    { name: 'Chess', icon: '♟️', desc: 'Master strategy and critical thinking', href: '/modules/chess' },
-    { name: 'Coding', icon: '💻', desc: 'Learn programming and problem-solving', href: '/modules/coding' },
-    { name: 'She Can Be', icon: '🎯', desc: 'Explore careers and aspirations', href: '/modules/quiz' },
-    { name: 'Geography', icon: '🌍', desc: 'Discover cultures and global perspectives', href: '/modules/geography' },
-    { name: 'Leadership', icon: '👑', desc: 'Develop leadership and communication skills', href: '/modules/leadership' },
-    { name: 'Wellness', icon: '💪', desc: 'Build health and wellness habits', href: '/modules/wellness' },
+    { name: 'Chess', icon: '♟️', desc: 'Master strategy and critical thinking', href: '/chess' },
+    { name: 'Coding', icon: '💻', desc: 'Learn programming and problem-solving', href: '/coding' },
+    { name: 'She Can Be', icon: '🎯', desc: 'Explore careers and aspirations', href: '/quiz' },
+    { name: 'Geography', icon: '🌍', desc: 'Discover cultures and global perspectives', href: '/geography' },
+    { name: 'Leadership', icon: '👑', desc: 'Develop leadership and communication skills', href: '/leadership' },
+    { name: 'Wellness', icon: '💪', desc: 'Build health and wellness habits', href: '/wellness' },
   ];
 
   const pricingTiers = [
@@ -23,7 +23,7 @@ export default function Home() {
       price: '$0',
       description: 'Perfect for exploring',
       features: ['Browse all modules', 'View lessons', 'No account required'],
-      href: '/modules/chess',
+      href: '/chess',
       cta: 'Start Exploring',
     },
     {
@@ -81,7 +81,7 @@ export default function Home() {
 
           <nav className="hidden md:flex items-center gap-8">
             <a href="#modules" className="text-gray-600 hover:text-brinda-purple transition">Explore</a>
-            <Link href="/modules/chess" className="text-gray-600 hover:text-brinda-purple transition">Play</Link>
+            <Link href="/chess" className="text-gray-600 hover:text-brinda-purple transition">Play</Link>
             <Link href="/about" className="text-gray-600 hover:text-brinda-purple transition">About</Link>
             <Link href="/pricing" className="text-gray-600 hover:text-brinda-purple transition">Pricing</Link>
           </nav>
@@ -108,7 +108,7 @@ export default function Home() {
             Master chess strategy, learn to code, explore geography, and develop leadership skills. All in one platform designed by women, for girls.
           </p>
           <div className="flex gap-4 justify-center flex-wrap">
-            <Link href="/modules/chess">
+            <Link href="/chess">
               <Button variant="primary" size="lg">Start Exploring Free</Button>
             </Link>
             <Link href="/pricing">

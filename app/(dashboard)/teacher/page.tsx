@@ -47,12 +47,12 @@ export default function TeacherDashboard() {
   }
 
   const modules = [
-    { name: 'Chess', icon: '♟️', href: '/modules/chess' },
-    { name: 'Coding', icon: '💻', href: '/modules/coding' },
-    { name: 'She Can Be', icon: '🎯', href: '/modules/quiz' },
-    { name: 'Geography', icon: '🌍', href: '/modules/geography' },
-    { name: 'Leadership', icon: '👑', href: '/modules/leadership' },
-    { name: 'Wellness', icon: '💪', href: '/modules/wellness' },
+    { name: 'Chess', icon: '♟️', href: '/chess' },
+    { name: 'Coding', icon: '💻', href: '/coding' },
+    { name: 'She Can Be', icon: '🎯', href: '/quiz' },
+    { name: 'Geography', icon: '🌍', href: '/geography' },
+    { name: 'Leadership', icon: '👑', href: '/leadership' },
+    { name: 'Wellness', icon: '💪', href: '/wellness' },
   ];
 
   return (
