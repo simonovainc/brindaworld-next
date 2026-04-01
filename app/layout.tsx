@@ -13,12 +13,12 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'en_US',
-    url: process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000',
+    url: process.env.NEXT_PUBLIC_APP_URL || '/og-image.jpg',
     title: 'BrindaWorld - Girls Empowerment EdTech Platform',
     description: 'Empower girls through chess, coding, geography, and leadership education',
     images: [
       {
-        url: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/og-image.jpg`,
+        url: process.env.NEXT_PUBLIC_APP_URL ? `${process.env.NEXT_PUBLIC_APP_URL}/og-image.jpg` : '/og-image.jpg',
         width: 1200,
         height: 630,
         alt: 'BrindaWorld',

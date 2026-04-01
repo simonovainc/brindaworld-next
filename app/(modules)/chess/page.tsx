@@ -1,8 +1,9 @@
 'use client';
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { Card, CardBody, CardHeader, CardFooter } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
+import { createClient } from '@/lib/supabase/client';
 
 type BoardState = (string | null)[][];
 type Piece = 'P' | 'N' | 'B' | 'R' | 'Q' | 'K' | 'p' | 'n' | 'b' | 'r' | 'q' | 'k' | null;
@@ -35,6 +36,80 @@ export default function ChessModule() {
   const [theme, setTheme] = useState<'classic' | 'ocean' | 'forest' | 'royal'>('classic');
   const [difficulty, setDifficulty] = useState<'easy' | 'medium' | 'hard'>('medium');
   const [gameStatus, setGameStatus] = useState<string>('Game in progress');
+  const [user, setUser] = useState<{ id: string } | null>(null);
+  const [showSignInPrompt, setShowSignInPrompt] = useState(false);
+
+  // Load user and game progress on mount
+  useEffect(() => {
+    const loadUserAndProgress = async () => {
+      const supabase = createClient();
+      try {
+        const { data: { user: authUser } } = await supabase.auth.getUser();
+        if (authUser) {
+          setUser({ id: authUser.id });
+          setShowSignInPrompt(false);
+
+          // Load saved game progress
+          try {
+            const { data, error } = await supabase
+              .from('chess_games')
+              .select('board_state, moves, captured_pieces, theme, difficulty')
+              .eq('user_id', authUser.id)
+              .order('created_at', { ascending: false })
+              .limit(1)
+              .single();
+
+            if (data) {
+              if (data.board_state) setBoardState(data.board_state);
+              if (data.moves) setMoveHistory(data.moves);
+              if (data.captured_pieces) setCapturedPieces(data.captured_pieces);
+              if (data.theme) setTheme(data.theme);
+              if (data.difficulty) setDifficulty(data.difficulty);
+            }
+          } catch (err) {
+            // No saved game found, continue with defaults
+          }
+        } else {
+          setShowSignInPrompt(true);
+        }
+      } catch (err) {
+        console.error('Error loading user:', err);
+      }
+    };
+
+    loadUserAndProgress();
+  }, []);
+
+  // Save progress to Supabase when game state changes
+  const saveProgress = useCallback(async () => {
+    if (!user) return;
+
+    const supabase = createClient();
+    try {
+      await supabase.from('chess_games').upsert(
+        {
+          user_id: user.id,
+          board_state: boardState,
+          moves: moveHistory,
+          captured_pieces: capturedPieces,
+          theme,
+          difficulty,
+          result: gameStatus,
+        },
+        { onConflict: 'user_id' }
+      );
+    } catch (err) {
+      console.error('Error saving chess progress:', err);
+    }
+  }, [user, boardState, moveHistory, capturedPieces, theme, difficulty, gameStatus]);
+
+  // Auto-save every 30 seconds if user is logged in
+  useEffect(() => {
+    if (!user) return;
+
+    const interval = setInterval(saveProgress, 30000);
+    return () => clearInterval(interval);
+  }, [user, saveProgress]);
 
   const pieceSymbols: Record<string, string> = {
     P: '♙',
@@ -223,7 +298,7 @@ export default function ChessModule() {
     }
   };
 
-  const resetGame = () => {
+  const resetGame = async () => {
     setBoardState([
       ['r', 'n', 'b', 'q', 'k', 'b', 'n', 'r'],
       ['p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'],
@@ -239,6 +314,36 @@ export default function ChessModule() {
     setMoveHistory([]);
     setCapturedPieces({ white: [], black: [] });
     setGameStatus('Game in progress');
+
+    // Save reset state if user is logged in
+    if (user) {
+      const supabase = createClient();
+      try {
+        await supabase.from('chess_games').upsert(
+          {
+            user_id: user.id,
+            board_state: [
+              ['r', 'n', 'b', 'q', 'k', 'b', 'n', 'r'],
+              ['p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'],
+              [null, null, null, null, null, null, null, null],
+              [null, null, null, null, null, null, null, null],
+              [null, null, null, null, null, null, null, null],
+              [null, null, null, null, null, null, null, null],
+              ['P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'],
+              ['R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R'],
+            ],
+            moves: [],
+            captured_pieces: { white: [], black: [] },
+            theme,
+            difficulty,
+            result: 'Game in progress',
+          },
+          { onConflict: 'user_id' }
+        );
+      } catch (err) {
+        console.error('Error resetting chess game:', err);
+      }
+    }
   };
 
   const colors = themeColors[theme];
@@ -249,6 +354,11 @@ export default function ChessModule() {
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-brinda-purple mb-2">♟ Chess Master</h1>
           <p className="text-gray-700">Master strategy, critical thinking, and the ancient game of chess.</p>
+          {showSignInPrompt && (
+            <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg text-sm text-blue-900">
+              💡 Sign in to save your game progress and continue where you left off!
+            </div>
+          )}
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">

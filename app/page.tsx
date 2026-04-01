@@ -80,9 +80,9 @@ export default function Home() {
           </Link>
 
           <nav className="hidden md:flex items-center gap-8">
+            <a href="#modules" className="text-gray-600 hover:text-brinda-purple transition">Explore</a>
             <Link href="/modules/chess" className="text-gray-600 hover:text-brinda-purple transition">Play</Link>
-            <Link href="/modules/chess" className="text-gray-600 hover:text-brinda-purple transition">Learn</Link>
-            <Link href="/about" className="text-gray-600 hover:text-brinda-purple transition">Lead</Link>
+            <Link href="/about" className="text-gray-600 hover:text-brinda-purple transition">About</Link>
             <Link href="/pricing" className="text-gray-600 hover:text-brinda-purple transition">Pricing</Link>
           </nav>
 
@@ -141,7 +141,7 @@ export default function Home() {
       </section>
 
       {/* Modules Showcase */}
-      <section className="px-6 py-16 md:py-24 bg-gray-50">
+      <section id="modules" className="px-6 py-16 md:py-24 bg-gray-50">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-bold text-brinda-purple mb-16 text-center">
             Learning Modules
@@ -272,9 +272,9 @@ export default function Home() {
             <Link href="/signup">
               <Button variant="secondary" size="lg">Create Free Account</Button>
             </Link>
-            <Link href="/modules/chess">
+            <a href="#modules">
               <Button variant="outline" size="lg">Explore Now</Button>
-            </Link>
+            </a>
           </div>
         </div>
       </section>
@@ -326,7 +326,7 @@ export default function Home() {
 
           <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center">
             <p className="text-sm text-gray-400">
-              &copy; 2026 Simonova Inc. All rights reserved.
+              &copy; 2026 BrindaWorld&trade; &mdash; a tradename of Simonova Inc., Canada&apos;s Federal Corporation. All rights reserved.
             </p>
             <p className="text-sm text-gray-400 mt-4 md:mt-0">
               Empowering girls through education

@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardBody, CardHeader, CardFooter } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
+import { createClient } from '@/lib/supabase/client';
 
 type ViewMode = 'home' | 'mood' | 'breathing' | 'gratitude' | 'habits' | 'timer';
 
@@ -17,6 +18,8 @@ export default function WellnessModule() {
   const [breathingPhase, setBreathingPhase] = useState<'inhale' | 'hold' | 'exhale'>('inhale');
   const [timerSeconds, setTimerSeconds] = useState(300);
   const [timerActive, setTimerActive] = useState(false);
+  const [user, setUser] = useState<{ id: string } | null>(null);
+  const [showSignInPrompt, setShowSignInPrompt] = useState(false);
 
   const moods = [
     { emoji: '😄', label: 'Happy', color: 'bg-yellow-100 border-yellow-400' },
@@ -34,6 +37,65 @@ export default function WellnessModule() {
     { id: 4, name: 'Eat fruits or vegetables', icon: '🥗' },
     { id: 5, name: 'Practice gratitude', icon: '🙏' },
   ];
+
+  // Load user and wellness data on mount
+  useEffect(() => {
+    const loadUserAndProgress = async () => {
+      const supabase = createClient();
+      try {
+        const { data: { user: authUser } } = await supabase.auth.getUser();
+        if (authUser) {
+          setUser({ id: authUser.id });
+          setShowSignInPrompt(false);
+
+          // Load saved mood logs
+          try {
+            const { data, error } = await supabase
+              .from('mood_logs')
+              .select('mood_history, gratitude_entries, completed_habits')
+              .eq('user_id', authUser.id)
+              .order('created_at', { ascending: false })
+              .limit(1)
+              .single();
+
+            if (data) {
+              if (data.mood_history) setMoodHistory(data.mood_history);
+              if (data.gratitude_entries) setGratitudeEntries(data.gratitude_entries);
+              if (data.completed_habits) setCompletedHabits(data.completed_habits);
+            }
+          } catch (err) {
+            // No saved wellness data found, continue with defaults
+          }
+        } else {
+          setShowSignInPrompt(true);
+        }
+      } catch (err) {
+        console.error('Error loading user:', err);
+      }
+    };
+
+    loadUserAndProgress();
+  }, []);
+
+  // Save wellness progress to Supabase
+  const saveWellnessProgress = async (moods: string[], gratitude: string[], habits: number[]) => {
+    if (!user) return;
+
+    const supabase = createClient();
+    try {
+      await supabase.from('mood_logs').upsert(
+        {
+          user_id: user.id,
+          mood_history: moods,
+          gratitude_entries: gratitude,
+          completed_habits: habits,
+        },
+        { onConflict: 'user_id' }
+      );
+    } catch (err) {
+      console.error('Error saving wellness progress:', err);
+    }
+  };
 
   // Breathing exercise effect
   useEffect(() => {
@@ -68,23 +130,30 @@ export default function WellnessModule() {
 
   const handleMoodSelect = (mood: string) => {
     setSelectedMood(mood);
-    setMoodHistory([mood, ...moodHistory.slice(0, 6)]);
+    const newMoodHistory = [mood, ...moodHistory.slice(0, 6)];
+    setMoodHistory(newMoodHistory);
+    saveWellnessProgress(newMoodHistory, gratitudeEntries, completedHabits);
     setTimeout(() => setViewMode('home'), 1500);
   };
 
   const addGratitude = () => {
     if (currentGratitude.trim()) {
-      setGratitudeEntries([currentGratitude, ...gratitudeEntries]);
+      const newEntries = [currentGratitude, ...gratitudeEntries];
+      setGratitudeEntries(newEntries);
       setCurrentGratitude('');
+      saveWellnessProgress(moodHistory, newEntries, completedHabits);
     }
   };
 
   const toggleHabit = (habitId: number) => {
+    let newHabits;
     if (completedHabits.includes(habitId)) {
-      setCompletedHabits(completedHabits.filter((id) => id !== habitId));
+      newHabits = completedHabits.filter((id) => id !== habitId);
     } else {
-      setCompletedHabits([...completedHabits, habitId]);
+      newHabits = [...completedHabits, habitId];
     }
+    setCompletedHabits(newHabits);
+    saveWellnessProgress(moodHistory, gratitudeEntries, newHabits);
   };
 
   const formatTime = (seconds: number) => {
@@ -108,6 +177,11 @@ export default function WellnessModule() {
           </div>
           <h1 className="text-4xl font-bold text-brinda-purple mb-2">🌿 Wellness Zone</h1>
           <p className="text-gray-700">Take care of yourself. Mental and physical health matter.</p>
+          {showSignInPrompt && (
+            <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg text-sm text-blue-900">
+              💡 Sign in to save your mood logs, gratitude journal, and completed habits!
+            </div>
+          )}
         </div>
 
         {/* Navigation Tabs */}

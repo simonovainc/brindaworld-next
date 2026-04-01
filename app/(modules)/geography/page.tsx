@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/Button';
 
 type Region = 'Africa' | 'Asia' | 'Europe' | 'North America' | 'South America' | 'Oceania';
 type ViewMode = 'explore' | 'quiz';
+type QuestionType = 'capital' | 'language' | 'currency' | 'funfact';
 
 interface Country {
   name: string;
@@ -25,12 +26,100 @@ interface RegionData {
   countries: Country[];
 }
 
+interface QuizQuestion {
+  type: QuestionType;
+  question: string;
+  country: Country;
+  correctAnswer: string;
+  options: string[];
+}
+
+interface QuizState {
+  questions: QuizQuestion[];
+  currentQuestionIndex: number;
+  score: number;
+  selectedAnswer: string | null;
+  showFeedback: boolean;
+  isAnswerCorrect: boolean | null;
+  isComplete: boolean;
+}
+
+function shuffleArray<T>(array: T[]): T[] {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+}
+
+function generateQuizQuestions(allCountries: Country[]): QuizQuestion[] {
+  const questions: QuizQuestion[] = [];
+  const shuffledCountries = shuffleArray(allCountries);
+  const countriesToUse = shuffledCountries.slice(0, 10);
+  const questionTypes: QuestionType[] = ['capital', 'language', 'currency', 'funfact'];
+
+  countriesToUse.forEach((country) => {
+    const questionType = questionTypes[Math.floor(Math.random() * questionTypes.length)];
+    let question = '';
+    let correctAnswer = '';
+
+    switch (questionType) {
+      case 'capital':
+        question = `What is the capital of ${country.name}?`;
+        correctAnswer = country.capital;
+        break;
+      case 'language':
+        question = `What language is spoken in ${country.name}?`;
+        correctAnswer = country.language;
+        break;
+      case 'currency':
+        question = `What is the currency of ${country.name}?`;
+        correctAnswer = country.currency;
+        break;
+      case 'funfact':
+        question = `Which of these is a fact about ${country.name}?`;
+        correctAnswer = country.funFact;
+        break;
+    }
+
+    const options = [correctAnswer];
+    const otherCountries = shuffledCountries.filter((c) => c.name !== country.name).slice(0, 3);
+
+    otherCountries.forEach((otherCountry) => {
+      switch (questionType) {
+        case 'capital':
+          options.push(otherCountry.capital);
+          break;
+        case 'language':
+          options.push(otherCountry.language);
+          break;
+        case 'currency':
+          options.push(otherCountry.currency);
+          break;
+        case 'funfact':
+          options.push(otherCountry.funFact);
+          break;
+      }
+    });
+
+    questions.push({
+      type: questionType,
+      question,
+      country,
+      correctAnswer,
+      options: shuffleArray(options),
+    });
+  });
+
+  return questions;
+}
+
 export default function GeographyModule() {
   const [selectedRegion, setSelectedRegion] = useState<Region | null>(null);
   const [selectedCountry, setSelectedCountry] = useState<Country | null>(null);
   const [viewMode, setViewMode] = useState<ViewMode>('explore');
-  const [quizScore, setQuizScore] = useState(0);
-  const [quizzesCompleted, setQuizzesCompleted] = useState(0);
+  const [quizState, setQuizState] = useState<QuizState | null>(null);
 
   const regions: RegionData[] = [
     {
@@ -446,6 +535,61 @@ export default function GeographyModule() {
     setSelectedCountry(country);
   };
 
+  const startQuiz = () => {
+    const allCountries = regions.flatMap((r) => r.countries);
+    const questions = generateQuizQuestions(allCountries);
+    setQuizState({
+      questions,
+      currentQuestionIndex: 0,
+      score: 0,
+      selectedAnswer: null,
+      showFeedback: false,
+      isAnswerCorrect: null,
+      isComplete: false,
+    });
+  };
+
+  const handleAnswerSelect = (answer: string) => {
+    if (!quizState || quizState.showFeedback) return;
+
+    const currentQuestion = quizState.questions[quizState.currentQuestionIndex];
+    const isCorrect = answer === currentQuestion.correctAnswer;
+
+    setQuizState({
+      ...quizState,
+      selectedAnswer: answer,
+      showFeedback: true,
+      isAnswerCorrect: isCorrect,
+      score: isCorrect ? quizState.score + 1 : quizState.score,
+    });
+  };
+
+  const handleNextQuestion = () => {
+    if (!quizState) return;
+
+    const nextIndex = quizState.currentQuestionIndex + 1;
+
+    if (nextIndex >= quizState.questions.length) {
+      setQuizState({
+        ...quizState,
+        isComplete: true,
+      });
+    } else {
+      setQuizState({
+        ...quizState,
+        currentQuestionIndex: nextIndex,
+        selectedAnswer: null,
+        showFeedback: false,
+        isAnswerCorrect: null,
+      });
+    }
+  };
+
+  const resetQuiz = () => {
+    setQuizState(null);
+    setSelectedRegion(null);
+  };
+
   const currentRegion = regions.find((r) => r.name === selectedRegion);
 
   return (
@@ -473,7 +617,114 @@ export default function GeographyModule() {
           ))}
         </div>
 
-        {!selectedRegion ? (
+        {quizState ? (
+          <>
+            {/* Quiz Mode */}
+            {quizState.isComplete ? (
+              <Card>
+                <CardBody className="text-center space-y-6 py-12">
+                  <div className="text-6xl mb-4">🎉</div>
+                  <h2 className="text-3xl font-bold text-brinda-purple">Quiz Complete!</h2>
+                  <div className="text-5xl font-bold text-brinda-gold my-6">{quizState.score}/10</div>
+                  <p className="text-lg text-gray-700">
+                    {quizState.score === 10
+                      ? 'Perfect score! You\'re a geography expert! 🌟'
+                      : quizState.score >= 8
+                        ? 'Excellent work! You know your world well! 🌍'
+                        : quizState.score >= 6
+                          ? 'Good job! Keep learning and exploring! 📚'
+                          : 'Nice try! Geography is fun to explore! 🗺️'}
+                  </p>
+                  <Button onClick={resetQuiz} className="mt-6 bg-brinda-purple text-white px-8 py-3 rounded-lg font-bold hover:bg-brinda-purple-dark">
+                    Play Again
+                  </Button>
+                </CardBody>
+              </Card>
+            ) : (
+              <Card>
+                <CardHeader>
+                  <div className="flex justify-between items-center mb-4">
+                    <p className="font-bold text-brinda-purple">Question {quizState.currentQuestionIndex + 1}/10</p>
+                    <p className="font-bold text-brinda-gold">Score: {quizState.score}</p>
+                  </div>
+                  <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div
+                      className="bg-brinda-purple h-2 rounded-full transition-all"
+                      style={{
+                        width: `${((quizState.currentQuestionIndex + 1) / 10) * 100}%`,
+                      }}
+                    ></div>
+                  </div>
+                </CardHeader>
+                <CardBody className="space-y-6">
+                  {quizState.questions[quizState.currentQuestionIndex] && (
+                    <>
+                      <div className="text-center mb-6">
+                        <div className="text-5xl mb-4">
+                          {quizState.questions[quizState.currentQuestionIndex].country.flag}
+                        </div>
+                        <h3 className="text-2xl font-bold text-brinda-purple">
+                          {quizState.questions[quizState.currentQuestionIndex].question}
+                        </h3>
+                      </div>
+
+                      <div className="grid grid-cols-1 gap-3">
+                        {quizState.questions[quizState.currentQuestionIndex].options.map((option) => {
+                          const isCorrect = option === quizState.questions[quizState.currentQuestionIndex].correctAnswer;
+                          const isSelected = option === quizState.selectedAnswer;
+
+                          return (
+                            <button
+                              key={option}
+                              onClick={() => handleAnswerSelect(option)}
+                              disabled={quizState.showFeedback}
+                              className={`p-4 rounded-lg font-bold text-left transition-all ${
+                                !quizState.showFeedback
+                                  ? 'bg-gray-100 text-gray-800 hover:bg-gray-200'
+                                  : isSelected
+                                    ? isCorrect
+                                      ? 'bg-green-500 text-white'
+                                      : 'bg-red-500 text-white'
+                                    : isCorrect
+                                      ? 'bg-green-500 text-white'
+                                      : 'bg-gray-100 text-gray-800'
+                              }`}
+                            >
+                              {option}
+                            </button>
+                          );
+                        })}
+                      </div>
+
+                      {quizState.showFeedback && (
+                        <div
+                          className={`p-4 rounded-lg text-center font-bold ${
+                            quizState.isAnswerCorrect
+                              ? 'bg-green-100 text-green-800 border border-green-300'
+                              : 'bg-red-100 text-red-800 border border-red-300'
+                          }`}
+                        >
+                          {quizState.isAnswerCorrect
+                            ? '✓ Correct! Great job!'
+                            : `✗ Not quite. The correct answer is: ${quizState.questions[quizState.currentQuestionIndex].correctAnswer}`}
+                        </div>
+                      )}
+
+                      {quizState.showFeedback && (
+                        <Button
+                          onClick={handleNextQuestion}
+                          className="w-full bg-brinda-purple text-white py-3 rounded-lg font-bold hover:bg-brinda-purple-dark"
+                        >
+                          {quizState.currentQuestionIndex + 1 === quizState.questions.length ? 'See Results' : 'Next Question'}
+                        </Button>
+                      )}
+                    </>
+                  )}
+                </CardBody>
+              </Card>
+            )}
+          </>
+        ) : !selectedRegion ? (
           <>
             {/* Region Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
@@ -563,24 +814,18 @@ export default function GeographyModule() {
               </div>
             ) : (
               <Card>
-                <CardBody className="space-y-4">
-                  <p className="text-lg font-bold text-brinda-purple">Where is {currentRegion.countries[0].name}?</p>
-                  <p className="text-gray-700">Click on a country card below to select your answer.</p>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {currentRegion.countries.map((country) => (
-                      <button
-                        key={country.name}
-                        onClick={() => {
-                          setQuizzesCompleted(quizzesCompleted + 1);
-                          setQuizScore(quizScore + 1);
-                        }}
-                        className="p-4 rounded-lg bg-brinda-purple text-white hover:bg-brinda-purple-dark transition-colors min-h-[60px] font-bold"
-                      >
-                        {country.flag} {country.name}
-                      </button>
-                    ))}
-                  </div>
-                  <p className="text-sm text-brinda-purple font-bold">Score: {quizScore}/{quizzesCompleted}</p>
+                <CardBody className="text-center space-y-6 py-8">
+                  <div className="text-6xl mb-4">🧠</div>
+                  <h2 className="text-2xl font-bold text-brinda-purple">Ready to test your geography knowledge?</h2>
+                  <p className="text-gray-700">
+                    Take a 10-question quiz about countries from around the world. You'll be asked about capitals, languages, currencies, and fun facts!
+                  </p>
+                  <Button
+                    onClick={startQuiz}
+                    className="bg-brinda-purple text-white px-8 py-3 rounded-lg font-bold hover:bg-brinda-purple-dark min-h-[44px]"
+                  >
+                    Start Quiz
+                  </Button>
                 </CardBody>
               </Card>
             )}

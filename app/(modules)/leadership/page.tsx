@@ -1,8 +1,9 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardBody, CardHeader, CardFooter } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
+import { createClient } from '@/lib/supabase/client';
 
 type ViewMode = 'intro' | 'quiz' | 'results' | 'scenarios' | 'skills' | 'leaders';
 
@@ -27,6 +28,77 @@ export default function LeadershipModule() {
   const [selectedScenario, setSelectedScenario] = useState(0);
   const [scenarioAnswers, setScenarioAnswers] = useState<Record<number, number>>({});
   const [goalsFormData, setGoalsFormData] = useState({ goal: '', steps: '', timeline: '' });
+  const [user, setUser] = useState<{ id: string } | null>(null);
+  const [showSignInPrompt, setShowSignInPrompt] = useState(false);
+
+  // Load user and progress on mount
+  useEffect(() => {
+    const loadUserAndProgress = async () => {
+      const supabase = createClient();
+      try {
+        const { data: { user: authUser } } = await supabase.auth.getUser();
+        if (authUser) {
+          setUser({ id: authUser.id });
+          setShowSignInPrompt(false);
+
+          // Load saved progress
+          try {
+            const { data, error } = await supabase
+              .from('child_progress')
+              .select('quiz_answers, scenario_answers, leadership_style, goals_data')
+              .eq('user_id', authUser.id)
+              .eq('module', 'leadership')
+              .order('created_at', { ascending: false })
+              .limit(1)
+              .single();
+
+            if (data) {
+              if (data.quiz_answers) setQuizAnswers(data.quiz_answers);
+              if (data.scenario_answers) setScenarioAnswers(data.scenario_answers);
+              if (data.goals_data) setGoalsFormData(data.goals_data);
+            }
+          } catch (err) {
+            // No saved progress found, continue with defaults
+          }
+        } else {
+          setShowSignInPrompt(true);
+        }
+      } catch (err) {
+        console.error('Error loading user:', err);
+      }
+    };
+
+    loadUserAndProgress();
+  }, []);
+
+  // Save progress to Supabase
+  const saveLeadershipProgress = async () => {
+    if (!user) return;
+
+    const supabase = createClient();
+    try {
+      const styleCounts: Record<string, number> = {};
+      quizAnswers.forEach((style) => {
+        styleCounts[style] = (styleCounts[style] || 0) + 1;
+      });
+      const leadershipStyle = Object.entries(styleCounts).sort(([, a], [, b]) => b - a)[0]?.[0] || 'Democratic';
+
+      await supabase.from('child_progress').upsert(
+        {
+          user_id: user.id,
+          module: 'leadership',
+          quiz_answers: quizAnswers,
+          scenario_answers: scenarioAnswers,
+          leadership_style: leadershipStyle,
+          goals_data: goalsFormData,
+          progress: Math.round((quizAnswers.length / 5) * 100),
+        },
+        { onConflict: 'user_id,module' }
+      );
+    } catch (err) {
+      console.error('Error saving leadership progress:', err);
+    }
+  };
 
   const leadershipQuestions = [
     {
@@ -262,10 +334,25 @@ export default function LeadershipModule() {
   };
 
   const handleScenarioChoice = (choiceIndex: number) => {
-    setScenarioAnswers({
+    const newAnswers = {
       ...scenarioAnswers,
       [selectedScenario]: choiceIndex,
-    });
+    };
+    setScenarioAnswers(newAnswers);
+
+    // Save scenario answer
+    if (user) {
+      const supabase = createClient();
+      supabase.from('child_progress').upsert(
+        {
+          user_id: user.id,
+          module: 'leadership',
+          scenario_answers: newAnswers,
+        },
+        { onConflict: 'user_id,module' }
+      ).catch(err => console.error('Error saving scenario answer:', err));
+    }
+
     if (selectedScenario < scenarios.length - 1) {
       setSelectedScenario(selectedScenario + 1);
     } else {
@@ -287,6 +374,11 @@ export default function LeadershipModule() {
           </div>
           <h1 className="text-4xl font-bold text-brinda-purple mb-2">👑 Leadership Academy</h1>
           <p className="text-gray-700">Discover and develop your natural leadership style.</p>
+          {showSignInPrompt && (
+            <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg text-sm text-blue-900">
+              💡 Sign in to save your leadership style and completed scenarios!
+            </div>
+          )}
         </div>
 
         {/* Navigation Tabs */}
@@ -577,7 +669,15 @@ export default function LeadershipModule() {
               </div>
             </CardBody>
             <CardFooter>
-              <Button variant="primary" size="lg" className="w-full">
+              <Button
+                variant="primary"
+                size="lg"
+                className="w-full"
+                onClick={async () => {
+                  await saveLeadershipProgress();
+                  alert('Leadership plan saved!');
+                }}
+              >
                 Save My Leadership Plan
               </Button>
             </CardFooter>

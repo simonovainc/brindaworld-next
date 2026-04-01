@@ -1,8 +1,9 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardBody, CardHeader, CardFooter } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
+import { createClient } from '@/lib/supabase/client';
 
 type QuizStage = 'career-selection' | 'quiz' | 'results' | 'spotlight';
 
@@ -29,6 +30,73 @@ export default function SheCanbequiz() {
   const [quizAnswers, setQuizAnswers] = useState<string[]>([]);
   const [scores, setScores] = useState<Record<string, number>>({});
   const [dreamBoard, setDreamBoard] = useState<string[]>([]);
+  const [user, setUser] = useState<{ id: string } | null>(null);
+  const [showSignInPrompt, setShowSignInPrompt] = useState(false);
+
+  // Load user and quiz progress on mount
+  useEffect(() => {
+    const loadUserAndProgress = async () => {
+      const supabase = createClient();
+      try {
+        const { data: { user: authUser } } = await supabase.auth.getUser();
+        if (authUser) {
+          setUser({ id: authUser.id });
+          setShowSignInPrompt(false);
+
+          // Load saved quiz results
+          try {
+            const { data, error } = await supabase
+              .from('quiz_results')
+              .select('answers, scores, dream_board')
+              .eq('user_id', authUser.id)
+              .order('created_at', { ascending: false })
+              .limit(1)
+              .single();
+
+            if (data) {
+              if (data.answers) setQuizAnswers(data.answers);
+              if (data.scores) setScores(data.scores);
+              if (data.dream_board) setDreamBoard(data.dream_board);
+            }
+          } catch (err) {
+            // No saved quiz results found, continue with defaults
+          }
+        } else {
+          setShowSignInPrompt(true);
+        }
+      } catch (err) {
+        console.error('Error loading user:', err);
+      }
+    };
+
+    loadUserAndProgress();
+  }, []);
+
+  // Save progress when quiz is completed
+  const saveQuizProgress = async (newAnswers: string[], newScores: Record<string, number>, newDreamBoard: string[]) => {
+    if (!user) return;
+
+    const supabase = createClient();
+    try {
+      const topThree = Object.entries(newScores)
+        .sort(([, scoreA], [, scoreB]) => scoreB - scoreA)
+        .slice(0, 3)
+        .map(([id]) => id);
+
+      await supabase.from('quiz_results').upsert(
+        {
+          user_id: user.id,
+          answers: newAnswers,
+          scores: newScores,
+          career_matches: topThree,
+          dream_board: newDreamBoard,
+        },
+        { onConflict: 'user_id' }
+      );
+    } catch (err) {
+      console.error('Error saving quiz progress:', err);
+    }
+  };
 
   const careers: Record<string, Career> = {
     doctor: {
@@ -270,6 +338,7 @@ export default function SheCanbequiz() {
 
     if (quizAnswers.length + 1 >= quizQuestions.length) {
       setStage('results');
+      saveQuizProgress(newAnswers, newScores, dreamBoard);
     }
   };
 
@@ -285,11 +354,18 @@ export default function SheCanbequiz() {
     setSelectedCareers([]);
   };
 
-  const toggleDreamBoard = (careerId: string) => {
+  const toggleDreamBoard = async (careerId: string) => {
+    let newDreamBoard;
     if (dreamBoard.includes(careerId)) {
-      setDreamBoard(dreamBoard.filter((c) => c !== careerId));
+      newDreamBoard = dreamBoard.filter((c) => c !== careerId);
     } else {
-      setDreamBoard([...dreamBoard, careerId]);
+      newDreamBoard = [...dreamBoard, careerId];
+    }
+    setDreamBoard(newDreamBoard);
+
+    // Save dream board changes
+    if (user) {
+      await saveQuizProgress(quizAnswers, scores, newDreamBoard);
     }
   };
 
@@ -299,6 +375,11 @@ export default function SheCanbequiz() {
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-brinda-purple mb-2">She Can Be - Career Quiz</h1>
           <p className="text-gray-700">Discover which career paths match your interests and talents.</p>
+          {showSignInPrompt && (
+            <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg text-sm text-blue-900">
+              💡 Sign in to save your quiz results and dream board!
+            </div>
+          )}
         </div>
 
         {stage === 'career-selection' && (

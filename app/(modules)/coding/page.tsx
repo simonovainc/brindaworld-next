@@ -1,8 +1,9 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardBody, CardHeader, CardFooter } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
+import { createClient } from '@/lib/supabase/client';
 
 type Language = 'blocks' | 'python' | 'javascript';
 type Tab = 'learn' | 'practice' | 'create';
@@ -24,6 +25,68 @@ export default function CodingModule() {
   const [output, setOutput] = useState('');
   const [selectedExercise, setSelectedExercise] = useState(0);
   const [completedExercises, setCompletedExercises] = useState<string[]>([]);
+  const [user, setUser] = useState<{ id: string } | null>(null);
+  const [showSignInPrompt, setShowSignInPrompt] = useState(false);
+
+  // Load user and progress on mount
+  useEffect(() => {
+    const loadUserAndProgress = async () => {
+      const supabase = createClient();
+      try {
+        const { data: { user: authUser } } = await supabase.auth.getUser();
+        if (authUser) {
+          setUser({ id: authUser.id });
+          setShowSignInPrompt(false);
+
+          // Load saved progress
+          try {
+            const { data, error } = await supabase
+              .from('assessments')
+              .select('completed_exercises, code')
+              .eq('user_id', authUser.id)
+              .eq('module', 'coding')
+              .order('created_at', { ascending: false })
+              .limit(1)
+              .single();
+
+            if (data) {
+              if (data.completed_exercises) setCompletedExercises(data.completed_exercises);
+              if (data.code) setCode(data.code);
+            }
+          } catch (err) {
+            // No saved progress found, continue with defaults
+          }
+        } else {
+          setShowSignInPrompt(true);
+        }
+      } catch (err) {
+        console.error('Error loading user:', err);
+      }
+    };
+
+    loadUserAndProgress();
+  }, []);
+
+  // Save progress when exercises are completed
+  const saveProgress = async (newCompletedExercises: string[], currentCode: string) => {
+    if (!user) return;
+
+    const supabase = createClient();
+    try {
+      await supabase.from('assessments').upsert(
+        {
+          user_id: user.id,
+          module: 'coding',
+          completed_exercises: newCompletedExercises,
+          code: currentCode,
+          progress: Math.round((newCompletedExercises.length / 5) * 100),
+        },
+        { onConflict: 'user_id,module' }
+      );
+    } catch (err) {
+      console.error('Error saving coding progress:', err);
+    }
+  };
 
   const exercises: Exercise[] = [
     {
@@ -87,7 +150,9 @@ export default function CodingModule() {
       // Check if exercise is completed
       if (activeTab === 'practice' && logs.join('\n') === exercises[selectedExercise].expectedOutput) {
         if (!completedExercises.includes(exercises[selectedExercise].id)) {
-          setCompletedExercises([...completedExercises, exercises[selectedExercise].id]);
+          const updated = [...completedExercises, exercises[selectedExercise].id];
+          setCompletedExercises(updated);
+          saveProgress(updated, code);
         }
       }
     } catch (error) {
@@ -127,6 +192,11 @@ End`;
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-brinda-purple mb-2">💻 Coding Playground</h1>
           <p className="text-gray-700">Learn programming and build amazing applications with code.</p>
+          {showSignInPrompt && (
+            <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg text-sm text-blue-900">
+              💡 Sign in to save your progress and track completed exercises!
+            </div>
+          )}
         </div>
 
         {/* Language Selector */}
