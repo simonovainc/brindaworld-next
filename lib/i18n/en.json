@@ -1,0 +1,85 @@
+{
+  "common": {
+    "app_name": "BrindaWorld",
+    "tagline": "Empowering girls through chess, coding, and leadership",
+    "welcome": "Welcome to BrindaWorld",
+    "get_started": "Get Started",
+    "login": "Login",
+    "signup": "Sign Up",
+    "logout": "Logout",
+    "email": "Email",
+    "password": "Password",
+    "first_name": "First Name",
+    "last_name": "Last Name",
+    "country": "Country",
+    "language": "Language",
+    "role": "Role",
+    "forgot_password": "Forgot Password?",
+    "dont_have_account": "Don't have an account?",
+    "already_have_account": "Already have an account?",
+    "error": "Error",
+    "success": "Success",
+    "loading": "Loading...",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "back": "Back",
+    "next": "Next"
+  },
+  "home": {
+    "title": "Empower Your Journey",
+    "subtitle": "Learn chess, coding, geography, and leadership skills with BrindaWorld",
+    "explore_title": "Explore (Free)",
+    "explore_description": "Discover our learning modules without creating an account",
+    "save_title": "Save (Free Account)",
+    "save_description": "Create an account to save your progress and track your learning",
+    "flourish_title": "Flourish (Premium)",
+    "flourish_description": "Unlock advanced features, personalized coaching, and exclusive content",
+    "modules": "Learning Modules",
+    "chess": "Chess",
+    "coding": "Coding",
+    "quiz": "She Can Be",
+    "geography": "Geography",
+    "leadership": "Leadership",
+    "wellness": "Wellness"
+  },
+  "dashboard": {
+    "welcome": "Welcome back!",
+    "my_learning": "My Learning",
+    "progress": "Progress",
+    "modules": "Modules",
+    "achievements": "Achievements",
+    "settings": "Settings"
+  },
+  "parent": {
+    "title": "Parent Dashboard",
+    "children": "My Children",
+    "children_progress": "Children's Progress",
+    "overview": "Overview",
+    "reports": "Reports",
+    "manage": "Manage Children"
+  },
+  "teacher": {
+    "title": "Teacher Dashboard",
+    "my_classes": "My Classes",
+    "students": "Students",
+    "assignments": "Assignments",
+    "analytics": "Analytics"
+  },
+  "admin": {
+    "title": "Admin Dashboard",
+    "users": "Users",
+    "analytics": "Analytics",
+    "settings": "Settings",
+    "content_management": "Content Management"
+  },
+  "pricing": {
+    "monthly": "Monthly",
+    "annual": "Annual",
+    "per_month": "per month",
+    "subscribe": "Subscribe",
+    "features": "Features",
+    "all_features": "All features"
+  }
+}

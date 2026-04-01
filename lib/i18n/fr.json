@@ -1,0 +1,85 @@
+{
+  "common": {
+    "app_name": "BrindaWorld",
+    "tagline": "Autonomiser les filles par les échecs, la programmation et le leadership",
+    "welcome": "Bienvenue sur BrindaWorld",
+    "get_started": "Commencer",
+    "login": "Connexion",
+    "signup": "S'inscrire",
+    "logout": "Déconnexion",
+    "email": "Email",
+    "password": "Mot de passe",
+    "first_name": "Prénom",
+    "last_name": "Nom",
+    "country": "Pays",
+    "language": "Langue",
+    "role": "Rôle",
+    "forgot_password": "Mot de passe oublié?",
+    "dont_have_account": "Vous n'avez pas de compte?",
+    "already_have_account": "Vous avez déjà un compte?",
+    "error": "Erreur",
+    "success": "Succès",
+    "loading": "Chargement...",
+    "cancel": "Annuler",
+    "save": "Enregistrer",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "back": "Retour",
+    "next": "Suivant"
+  },
+  "home": {
+    "title": "Autonomiser Votre Parcours",
+    "subtitle": "Apprenez les échecs, la programmation, la géographie et les compétences en leadership avec BrindaWorld",
+    "explore_title": "Explorer (Gratuit)",
+    "explore_description": "Découvrez nos modules d'apprentissage sans créer de compte",
+    "save_title": "Enregistrer (Compte Gratuit)",
+    "save_description": "Créez un compte pour enregistrer votre progression et suivre votre apprentissage",
+    "flourish_title": "Prospérer (Premium)",
+    "flourish_description": "Déverrouillez les fonctionnalités avancées, l'entraînement personnalisé et le contenu exclusif",
+    "modules": "Modules d'Apprentissage",
+    "chess": "Échecs",
+    "coding": "Programmation",
+    "quiz": "Elle Peut Être",
+    "geography": "Géographie",
+    "leadership": "Leadership",
+    "wellness": "Bien-être"
+  },
+  "dashboard": {
+    "welcome": "Bienvenue!",
+    "my_learning": "Mon Apprentissage",
+    "progress": "Progression",
+    "modules": "Modules",
+    "achievements": "Réalisations",
+    "settings": "Paramètres"
+  },
+  "parent": {
+    "title": "Tableau de Bord Parent",
+    "children": "Mes Enfants",
+    "children_progress": "Progression des Enfants",
+    "overview": "Aperçu",
+    "reports": "Rapports",
+    "manage": "Gérer les Enfants"
+  },
+  "teacher": {
+    "title": "Tableau de Bord Enseignant",
+    "my_classes": "Mes Classes",
+    "students": "Étudiants",
+    "assignments": "Devoirs",
+    "analytics": "Analyse"
+  },
+  "admin": {
+    "title": "Tableau de Bord Admin",
+    "users": "Utilisateurs",
+    "analytics": "Analyse",
+    "settings": "Paramètres",
+    "content_management": "Gestion du Contenu"
+  },
+  "pricing": {
+    "monthly": "Mensuel",
+    "annual": "Annuel",
+    "per_month": "par mois",
+    "subscribe": "S'abonner",
+    "features": "Caractéristiques",
+    "all_features": "Toutes les caractéristiques"
+  }
+}

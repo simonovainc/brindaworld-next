@@ -1,27 +1,41 @@
 {
-  "name": "brindaworld",
+  "name": "brinda-world",
   "version": "1.0.0",
-  "description": "BrindaWorld - Educational gaming platform for girls aged 6-14",
-  "main": "index.js",
-  "engines": {
-    "node": ">=18.0.0"
-  },
+  "description": "BrindaWorld - Girls Empowerment EdTech Platform",
+  "private": true,
   "scripts": {
-    "start": "node index.js",
-    "build": "cd client && npm install && npm run build",
-    "dev": "concurrently \"node index.js\" \"cd client && npm run dev\"",
-    "migrate": "node src/migrate.js",
-    "install:all": "npm install && cd client && npm install"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "type-check": "tsc --noEmit",
+    "format": "prettier --write \"**/*.{ts,tsx,json,md}\""
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.100.1",
-    "cors": "^2.8.5",
-    "dotenv": "^16.4.5",
-    "express": "^4.19.2",
-    "mysql2": "^3.9.8"
+    "next": "^14.2.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "@supabase/ssr": "^0.4.0",
+    "@supabase/supabase-js": "^2.39.0",
+    "react-i18next": "^14.0.0",
+    "i18next": "^23.7.0",
+    "i18next-browser-languagedetector": "^7.2.0",
+    "i18next-http-backend": "^4.5.0",
+    "stripe": "^14.1.0",
+    "zustand": "^4.4.0",
+    "clsx": "^2.0.0",
+    "next-pwa": "^5.6.0"
   },
   "devDependencies": {
-    "concurrently": "^8.2.2",
-    "nodemon": "^3.1.3"
+    "typescript": "^5.3.0",
+    "@types/node": "^20.10.0",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "tailwindcss": "^3.4.0",
+    "postcss": "^8.4.0",
+    "autoprefixer": "^10.4.0",
+    "prettier": "^3.1.0",
+    "eslint": "^8.55.0",
+    "eslint-config-next": "^14.2.0"
   }
 }

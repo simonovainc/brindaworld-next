@@ -1,0 +1,59 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: #ffffff;
+  color: #1f2937;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Brinda brand colors */
+.brinda-primary {
+  color: #6b21a8;
+}
+
+.brinda-secondary {
+  color: #f59e0b;
+}
+
+.bg-brinda-primary {
+  background-color: #6b21a8;
+}
+
+.bg-brinda-secondary {
+  background-color: #f59e0b;
+}
+
+/* Smooth transitions */
+* {
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Focus styles */
+button:focus,
+a:focus,
+input:focus {
+  outline: 2px solid #6b21a8;
+  outline-offset: 2px;
+}

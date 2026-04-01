@@ -1,15 +1,36 @@
+# Dependencies
 node_modules
-.env
+.pnp
+.pnp.js
+
+# Testing
+coverage
+
+# Production
+.next
+out
+dist
+build
+
+# Misc
 .DS_Store
+*.pem
+.env.local
+.env.*.local
 
-# Client
-client/dist
-client/node_modules
-
-# Logs
-*.log
+# Debug
 npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
-# OS
-Thumbs.db
-.claude/
+# IDE
+.idea
+.vscode
+*.swp
+*.swo
+*~
+
+# PWA
+public/sw.js
+public/workbox-*.js
+public/workbox-*.js.map
