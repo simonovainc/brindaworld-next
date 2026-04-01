@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import clsx from 'clsx';
 import { useAuth } from '@/components/auth/AuthProvider';
-import { createServerSupabaseClient } from '@/lib/supabase/server';
+import { createClient } from '@/lib/supabase/client';
 import { Button } from '@/components/ui/Button';
 
 interface SidebarItem {
@@ -24,7 +24,7 @@ export function Sidebar() {
     const fetchUserRole = async () => {
       if (!user) return;
       try {
-        const supabase = await createServerSupabaseClient();
+        const supabase = createClient();
         const { data } = await supabase
           .from('profiles')
           .select('role')

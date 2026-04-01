@@ -1,7 +1,6 @@
 import { stripe } from '@/lib/stripe';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { NextRequest, NextResponse } from 'next/server';
-import { Readable } from 'stream';
 
 async function getRawRequestBody(req: NextRequest): Promise<string> {
   const chunks: Uint8Array[] = [];

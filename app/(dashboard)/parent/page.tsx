@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/components/auth/AuthProvider';
-import { createServerSupabaseClient } from '@/lib/supabase/server';
+import { createClient } from '@/lib/supabase/client';
 import { Card, CardBody, CardHeader } from '@/components/ui/Card';
 import type { Profile } from '@/types/database';
 
@@ -16,7 +16,7 @@ export default function ParentDashboard() {
       if (!user) return;
 
       try {
-        const supabase = await createServerSupabaseClient();
+        const supabase = createClient();
         const { data } = await supabase
           .from('profiles')
           .select('*')
