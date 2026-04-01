@@ -411,7 +411,7 @@ export default function GeographyModule() {
           language: 'Samoan, English',
           currency: 'Samoan Tala',
           funFact: 'Crosses the International Date Line creating unique geography',
-          womenLeader: 'Fiame Naomi Mata'afa was a prominent politician',
+          womenLeader: 'Fiame Naomi Mata\'afa was a prominent politician',
         },
         {
           name: 'Papua New Guinea',
