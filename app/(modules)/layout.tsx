@@ -37,7 +37,7 @@ export default function ModulesLayout({
               {modules.map((module) => (
                 <Link
                   key={module.path}
-                  href={`/chess${module.path}`}
+                  href={module.path}
                   className="px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-purple-50 hover:text-brinda-purple transition-colors"
                 >
                   {module.icon} {module.name}
@@ -69,7 +69,7 @@ export default function ModulesLayout({
               {modules.map((module) => (
                 <Link
                   key={module.path}
-                  href={`/chess${module.path}`}
+                  href={module.path}
                   className="block px-4 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-purple-50 hover:text-brinda-purple transition-colors"
                 >
                   {module.icon} {module.name}
@@ -97,20 +97,22 @@ export default function ModulesLayout({
             <div>
               <h4 className="font-bold mb-4">Learning Modules</h4>
               <ul className="space-y-2 text-sm text-gray-400">
-                <li><a href="#" className="hover:text-white transition-colors">Chess</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Coding</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Geography</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Career Quiz</a></li>
+                <li><Link href="/chess" className="hover:text-white transition-colors">Chess</Link></li>
+                <li><Link href="/coding" className="hover:text-white transition-colors">Coding</Link></li>
+                <li><Link href="/geography" className="hover:text-white transition-colors">Geography</Link></li>
+                <li><Link href="/quiz" className="hover:text-white transition-colors">Career Quiz</Link></li>
+                <li><Link href="/leadership" className="hover:text-white transition-colors">Leadership</Link></li>
+                <li><Link href="/wellness" className="hover:text-white transition-colors">Wellness</Link></li>
               </ul>
             </div>
 
             <div>
               <h4 className="font-bold mb-4">About</h4>
               <ul className="space-y-2 text-sm text-gray-400">
-                <li><a href="#" className="hover:text-white transition-colors">About Us</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Blog</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Contact</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">FAQ</a></li>
+                <li><Link href="/about" className="hover:text-white transition-colors">About Us</Link></li>
+                <li><Link href="/pricing" className="hover:text-white transition-colors">Pricing</Link></li>
+                <li><Link href="/contact" className="hover:text-white transition-colors">Contact</Link></li>
+                <li><Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link></li>
               </ul>
             </div>
 
@@ -127,10 +129,11 @@ export default function ModulesLayout({
 
           <div className="border-t border-gray-800 pt-8">
             <div className="flex flex-col md:flex-row justify-between items-center text-sm text-gray-400">
-              <p>&copy; 2026 BrindaWorld. All rights reserved.</p>
+              <p>&copy; 2026 BrindaWorld&trade; &mdash; a tradename of Simonova Inc., Canada&apos;s Federal Corporation. All rights reserved.</p>
               <div className="flex gap-6 mt-4 md:mt-0">
-                <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
-                <a href="#" className="hover:text-white transition-colors">Terms of Service</a>
+                <Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
+                <Link href="/terms" className="hover:text-white transition-colors">Terms of Service</Link>
+                <Link href="/accessibility" className="hover:text-white transition-colors">Accessibility</Link>
               </div>
             </div>
           </div>
