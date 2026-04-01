@@ -57,3 +57,191 @@ input:focus {
   outline: 2px solid #6b21a8;
   outline-offset: 2px;
 }
+
+/* ============================================
+   ACCESSIBILITY FEATURES
+   ============================================ */
+
+/* Screen reader only utility */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Skip to content link */
+.skip-to-content {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: #6b21a8;
+  color: white;
+  padding: 8px;
+  z-index: 100;
+}
+
+.skip-to-content:focus {
+  top: 0;
+}
+
+/* Enhanced focus-visible styles */
+:focus-visible {
+  outline: 3px solid #6b21a8;
+  outline-offset: 2px;
+}
+
+/* Minimum touch target size (WCAG 2.5) */
+button,
+a,
+input[type='button'],
+input[type='submit'],
+input[type='checkbox'],
+input[type='radio'] {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* Color Blind Modes - CSS Custom Properties */
+:root {
+  /* Normal vision palette */
+  --cb-primary: #6b21a8;
+  --cb-secondary: #f59e0b;
+  --cb-success: #10b981;
+  --cb-warning: #f59e0b;
+  --cb-danger: #ef4444;
+  --cb-info: #3b82f6;
+}
+
+/* Protanopia (Red-blind) - uses blues and yellows */
+html.color-blind-protanopia {
+  --cb-primary: #0173b2;
+  --cb-secondary: #ece133;
+  --cb-success: #029e73;
+  --cb-warning: #de8f05;
+  --cb-danger: #cc78bc;
+  --cb-info: #0173b2;
+}
+
+/* Deuteranopia (Green-blind) - uses blues and magentas */
+html.color-blind-deuteranopia {
+  --cb-primary: #0173b2;
+  --cb-secondary: #e74c3c;
+  --cb-success: #cc78bc;
+  --cb-warning: #de8f05;
+  --cb-danger: #e74c3c;
+  --cb-info: #0173b2;
+}
+
+/* Tritanopia (Blue-yellow blind) - uses reds and blues */
+html.color-blind-tritanopia {
+  --cb-primary: #e74c3c;
+  --cb-secondary: #3498db;
+  --cb-success: #2980b9;
+  --cb-warning: #e67e22;
+  --cb-danger: #c0392b;
+  --cb-info: #2980b9;
+}
+
+/* Achromatopsia (Complete color blindness) - uses grays */
+html.color-blind-achromatopsia {
+  --cb-primary: #4a4a4a;
+  --cb-secondary: #888888;
+  --cb-success: #606060;
+  --cb-warning: #888888;
+  --cb-danger: #333333;
+  --cb-info: #555555;
+}
+
+/* High Contrast Mode - increased saturation and darker backgrounds */
+html.high-contrast {
+  --color-text: #000000;
+  --color-bg: #ffffff;
+}
+
+html.high-contrast body {
+  background-color: #ffffff;
+  color: #000000;
+}
+
+html.high-contrast button,
+html.high-contrast a {
+  border: 2px solid currentColor;
+}
+
+html.high-contrast a {
+  text-decoration: underline;
+  font-weight: bold;
+}
+
+/* Large Text Mode */
+html.large-text {
+  font-size: 18px;
+}
+
+html.large-text h1 {
+  font-size: 2.2em;
+}
+
+html.large-text h2 {
+  font-size: 1.8em;
+}
+
+html.large-text h3 {
+  font-size: 1.5em;
+}
+
+html.large-text body {
+  line-height: 1.8;
+}
+
+/* Reduced Motion Mode - disable animations */
+html.reduced-motion,
+html.reduced-motion * {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}
+
+html.reduced-motion {
+  scroll-behavior: auto;
+}
+
+/* Dyslexia-Friendly Font */
+html.dyslexia-font {
+  font-family: 'OpenDyslexic', 'Verdana', sans-serif;
+  font-size: 1.1em;
+  line-height: 1.8;
+  letter-spacing: 0.05em;
+}
+
+html.dyslexia-font body {
+  font-weight: 400;
+}
+
+/* Font size scaling based on Zustand state */
+html[data-font-size-multiplier='0.9'] {
+  font-size: 14.4px;
+}
+
+html[data-font-size-multiplier='1'] {
+  font-size: 16px;
+}
+
+html[data-font-size-multiplier='1.1'] {
+  font-size: 17.6px;
+}
+
+html[data-font-size-multiplier='1.25'] {
+  font-size: 20px;
+}
+
+html[data-font-size-multiplier='1.5'] {
+  font-size: 24px;
+}

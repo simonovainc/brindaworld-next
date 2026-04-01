@@ -8,6 +8,19 @@ export async function middleware(request: NextRequest) {
     },
   });
 
+  // Extract geo data from Vercel headers or IP
+  const countryCode =
+    request.headers.get('x-vercel-ip-country') ||
+    request.headers.get('cf-ipcountry') ||
+    'CA';
+  const region = request.headers.get('x-vercel-ip-country-region') || undefined;
+
+  // Set custom headers for geo data
+  response.headers.set('x-user-country', countryCode);
+  if (region) {
+    response.headers.set('x-user-region', region);
+  }
+
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,

@@ -1,5 +1,8 @@
 import type { Metadata } from 'next';
 import { AuthProvider } from '@/components/auth/AuthProvider';
+import { AnalyticsProvider } from '@/components/providers/AnalyticsProvider';
+import { AccessibilityProvider } from '@/components/providers/AccessibilityProvider';
+import { AccessibilityPanel } from '@/components/ui/AccessibilityPanel';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -44,11 +47,25 @@ export default function RootLayout({
         <meta name="theme-color" content="#6B21A8" />
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
         <link rel="manifest" href="/manifest.json" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
+          rel="stylesheet"
+        />
       </head>
       <body>
-        <AuthProvider>
-          {children}
-        </AuthProvider>
+        <a href="#main-content" className="skip-to-content">
+          Skip to main content
+        </a>
+        <AccessibilityProvider>
+          <AuthProvider>
+            <AnalyticsProvider>
+              <main id="main-content">
+                {children}
+              </main>
+              <AccessibilityPanel />
+            </AnalyticsProvider>
+          </AuthProvider>
+        </AccessibilityProvider>
       </body>
     </html>
   );

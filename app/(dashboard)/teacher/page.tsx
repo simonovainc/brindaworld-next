@@ -1,9 +1,11 @@
 'use client';
 
+import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/components/auth/AuthProvider';
 import { createClient } from '@/lib/supabase/client';
-import { Card, CardBody, CardHeader } from '@/components/ui/Card';
+import { Card, CardBody, CardHeader, CardFooter } from '@/components/ui/Card';
+import { Button } from '@/components/ui/Button';
 import type { Profile } from '@/types/database';
 
 export default function TeacherDashboard() {
@@ -44,50 +46,128 @@ export default function TeacherDashboard() {
     );
   }
 
+  const modules = [
+    { name: 'Chess', icon: '♟️', href: '/modules/chess' },
+    { name: 'Coding', icon: '💻', href: '/modules/coding' },
+    { name: 'She Can Be', icon: '🎯', href: '/modules/quiz' },
+    { name: 'Geography', icon: '🌍', href: '/modules/geography' },
+    { name: 'Leadership', icon: '👑', href: '/modules/leadership' },
+    { name: 'Wellness', icon: '💪', href: '/modules/wellness' },
+  ];
+
   return (
     <div className="p-8">
-      <h1 className="text-3xl font-bold text-brinda-purple mb-8">
+      <h1 className="text-3xl font-bold text-brinda-purple mb-2">
         Welcome, {profile?.first_name || 'Teacher'}!
       </h1>
+      <p className="text-gray-600 mb-8">Manage your classes, assignments, and track student progress.</p>
 
+      {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
         <Card>
           <CardBody className="text-center">
             <div className="text-3xl font-bold text-brinda-purple">0</div>
-            <p className="text-gray-600 text-sm">Classes</p>
+            <p className="text-gray-600 text-sm mt-2">Classes</p>
           </CardBody>
         </Card>
 
         <Card>
           <CardBody className="text-center">
             <div className="text-3xl font-bold text-brinda-gold">0</div>
-            <p className="text-gray-600 text-sm">Students</p>
+            <p className="text-gray-600 text-sm mt-2">Students</p>
           </CardBody>
         </Card>
 
         <Card>
           <CardBody className="text-center">
             <div className="text-3xl font-bold text-blue-600">0</div>
-            <p className="text-gray-600 text-sm">Assignments</p>
+            <p className="text-gray-600 text-sm mt-2">Assignments</p>
           </CardBody>
         </Card>
 
         <Card>
           <CardBody className="text-center">
             <div className="text-3xl font-bold text-green-600">0%</div>
-            <p className="text-gray-600 text-sm">Class Avg Progress</p>
+            <p className="text-gray-600 text-sm mt-2">Avg Progress</p>
           </CardBody>
         </Card>
       </div>
 
-      <Card>
+      {/* Classes Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+        <div className="lg:col-span-2">
+          <Card>
+            <CardHeader>
+              <h2 className="text-xl font-bold text-brinda-purple">My Classes</h2>
+            </CardHeader>
+            <CardBody>
+              <div className="text-center py-12">
+                <p className="text-gray-600 mb-4">You haven't created any classes yet.</p>
+                <Button variant="primary">Create Your First Class</Button>
+              </div>
+            </CardBody>
+          </Card>
+        </div>
+
+        {/* School Connection */}
+        <Card>
+          <CardHeader>
+            <h3 className="text-xl font-bold text-brinda-purple">School Connection</h3>
+          </CardHeader>
+          <CardBody>
+            <div className="mb-6">
+              <p className="text-sm text-gray-600 mb-2">Status</p>
+              <p className="font-bold text-gray-700">Not Connected</p>
+            </div>
+            <Button variant="outline" className="w-full">
+              Connect School
+            </Button>
+          </CardBody>
+        </Card>
+      </div>
+
+      {/* Assignments Section */}
+      <Card className="mb-8">
         <CardHeader>
-          <h2 className="text-xl font-bold text-brinda-purple">My Classes</h2>
+          <h2 className="text-xl font-bold text-brinda-purple">Assignments</h2>
         </CardHeader>
         <CardBody>
-          <p className="text-gray-600">No classes created yet. Create a class to start teaching.</p>
+          <div className="text-center py-8 text-gray-600">
+            <p>No assignments yet.</p>
+            <p className="text-sm mt-2">Create classes to assign learning modules.</p>
+          </div>
         </CardBody>
       </Card>
+
+      {/* Student Performance */}
+      <Card className="mb-8">
+        <CardHeader>
+          <h2 className="text-xl font-bold text-brinda-purple">Student Performance Summary</h2>
+        </CardHeader>
+        <CardBody>
+          <div className="text-center py-8 text-gray-600">
+            <p>No students yet.</p>
+            <p className="text-sm mt-2">Performance data will appear once you create classes.</p>
+          </div>
+        </CardBody>
+      </Card>
+
+      {/* Quick Links to Modules */}
+      <div>
+        <h2 className="text-2xl font-bold text-brinda-purple mb-6">Learning Modules</h2>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+          {modules.map((module) => (
+            <Link key={module.name} href={module.href}>
+              <Card hoverable className="h-full text-center cursor-pointer">
+                <CardBody className="flex flex-col items-center justify-center min-h-[120px]">
+                  <div className="text-3xl mb-2">{module.icon}</div>
+                  <p className="font-semibold text-brinda-purple text-sm">{module.name}</p>
+                </CardBody>
+              </Card>
+            </Link>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }

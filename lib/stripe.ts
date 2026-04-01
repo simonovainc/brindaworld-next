@@ -10,7 +10,6 @@ function getStripeClient(): Stripe {
   });
 }
 
-// Lazy-initialize to avoid crashing during build/page-data collection
 let _stripe: Stripe | null = null;
 export function getStripe(): Stripe {
   if (!_stripe) {
@@ -19,7 +18,6 @@ export function getStripe(): Stripe {
   return _stripe;
 }
 
-// Keep backward compat — but only access at runtime, not module load
 export const stripe = new Proxy({} as Stripe, {
   get(_target, prop) {
     return (getStripe() as any)[prop];

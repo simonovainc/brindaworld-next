@@ -77,7 +77,7 @@ export default function LoginPage() {
             />
 
             <div className="flex justify-end">
-              <Link href="#" className="text-sm text-brinda-purple hover:underline">
+              <Link href="/auth/reset-password" className="text-sm text-brinda-purple hover:underline">
                 Forgot password?
               </Link>
             </div>
