@@ -1,11 +1,29 @@
 import Stripe from 'stripe';
 
-if (!process.env.STRIPE_SECRET_KEY) {
-  throw new Error('STRIPE_SECRET_KEY environment variable is not set');
+function getStripeClient(): Stripe {
+  const key = process.env.STRIPE_SECRET_KEY;
+  if (!key) {
+    throw new Error('STRIPE_SECRET_KEY environment variable is not set');
+  }
+  return new Stripe(key, {
+    apiVersion: '2024-04-10',
+  });
 }
 
-export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: '2024-04-10',
+// Lazy-initialize to avoid crashing during build/page-data collection
+let _stripe: Stripe | null = null;
+export function getStripe(): Stripe {
+  if (!_stripe) {
+    _stripe = getStripeClient();
+  }
+  return _stripe;
+}
+
+// Keep backward compat — but only access at runtime, not module load
+export const stripe = new Proxy({} as Stripe, {
+  get(_target, prop) {
+    return (getStripe() as any)[prop];
+  },
 });
 
 export const STRIPE_PRODUCTS = {
@@ -15,7 +33,7 @@ export const STRIPE_PRODUCTS = {
 
 export async function getProductPrices(productId: string) {
   try {
-    const prices = await stripe.prices.list({
+    const prices = await getStripe().prices.list({
       product: productId,
       active: true,
     });
