@@ -3,38 +3,6 @@
   "devCommand": "npm run dev",
   "installCommand": "npm install",
   "framework": "nextjs",
-  "nodeVersion": "20.x",
-  "env": [
-    {
-      "key": "NEXT_PUBLIC_SUPABASE_URL",
-      "description": "Supabase project URL"
-    },
-    {
-      "key": "NEXT_PUBLIC_SUPABASE_ANON_KEY",
-      "description": "Supabase anonymous key"
-    },
-    {
-      "key": "SUPABASE_SERVICE_ROLE_KEY",
-      "description": "Supabase service role key"
-    },
-    {
-      "key": "NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY",
-      "description": "Stripe publishable key"
-    },
-    {
-      "key": "STRIPE_SECRET_KEY",
-      "description": "Stripe secret key"
-    },
-    {
-      "key": "STRIPE_WEBHOOK_SECRET",
-      "description": "Stripe webhook secret"
-    },
-    {
-      "key": "NEXT_PUBLIC_APP_URL",
-      "description": "Application URL",
-      "value": "@vercel_url"
-    }
-  ],
   "headers": [
     {
       "source": "/api/health",
