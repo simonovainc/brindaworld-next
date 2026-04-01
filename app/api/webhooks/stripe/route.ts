@@ -20,8 +20,20 @@ async function getRawRequestBody(req: NextRequest): Promise<string> {
     console.error('Error reading request body:', error);
   }
 
-  const buffer = Buffer.concat(chunks.map((chunk) => Buffer.from(chunk)));
-  return buffer.toString('utf-8');
+  // Convert chunks to a single Uint8Array manually (avoiding Buffer.concat for Edge runtime)
+  let totalLength = 0;
+  for (const chunk of chunks) {
+    totalLength += chunk.length;
+  }
+
+  const buffer = new Uint8Array(totalLength);
+  let offset = 0;
+  for (const chunk of chunks) {
+    buffer.set(chunk, offset);
+    offset += chunk.length;
+  }
+
+  return new TextDecoder().decode(buffer);
 }
 
 export async function POST(req: NextRequest) {
