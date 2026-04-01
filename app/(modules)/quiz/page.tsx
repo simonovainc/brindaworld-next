@@ -36,7 +36,7 @@ export default function SheCanbequiz() {
       title: 'Doctor',
       icon: '👨‍⚕️',
       description: 'Provide healthcare and save lives',
-      dayInLife: 'A doctor's day involves seeing patients, diagnosing conditions, and prescribing treatments. Dr. Fauci revolutionized public health globally.',
+      dayInLife: 'A doctor\'s day involves seeing patients, diagnosing conditions, and prescribing treatments. Dr. Fauci revolutionized public health globally.',
       womanRole: 'Dr. Mae Jemison was the first African American woman to travel to space. She was also a physician.',
       skillsNeeded: ['Communication', 'Problem-solving', 'Empathy', 'Attention to detail'],
       educationPath: 'Bachelor\'s degree (pre-med), Medical School (MD), Residency (3-7 years)',
